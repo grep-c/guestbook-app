@@ -1,0 +1,47 @@
+# -----------------------
+# Application (Flask)
+# -----------------------
+app:
+  image:
+    repository: guestbook-app
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 32080
+    nodePort: 32080
+  containerPort: 5000
+
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# -----------------------
+# Database (PostgreSQL)
+# -----------------------
+db:
+  image: postgres:15
+  port: 5432
+  username: guest
+  password: guestpass
+  database: guestbook
+
+  persistence:
+    enabled: true
+    storageClass: "local-manual"     # set to your storage class or leave empty to use default
+    size: 1Gi
+
+# Optionally expose the app with an Ingress (off by default)
+ingress:
+  enabled: false
+  className: ""
+  hosts:
+    - host: guestbook.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
